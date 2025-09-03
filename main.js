@@ -31,7 +31,6 @@ const port = process.env.NODE_SERVER_PORT
 //table with warnings?
 //check deviceId when refreshing access token 
 //if an old token that has been used already is received delete all tokens for that user
-// add a setupscript for the mongodb so it has a ttl 
 //anadir el jsdoc o como se llame
 // multiples sesiohnes a la vez 
 //endpoint para public keys 
