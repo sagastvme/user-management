@@ -1,6 +1,6 @@
 // tests/register.test.js
 import fetch from 'node-fetch'; 
-const API_URL = 'http://localhost:3000/register';
+const API_URL = `http://localhost:${process.env.NODE_SERVER_PORT}/register`;
 import { MongoClient } from 'mongodb';
 
 const USERNAME = 'race_test_user';
@@ -9,10 +9,10 @@ const PASSWORD = 'securePassword123!';
 describe('Register endpoint race condition test', () => {
 
   beforeAll(async()=>{
-    const uri = "mongodb://root:example@localhost:27017/";
+    const uri = process.env.MONGO_DB_URI
     const client = new MongoClient(uri);
     await client.connect();
-    let db = client.db("mydb"); 
+    let db = client.db(process.env.DATABASE_NAME); 
     await db.collection('users').deleteOne({_id: USERNAME});
     await client.close()
     })

@@ -1,6 +1,6 @@
 import { MongoClient } from "mongodb";
 
-const uri = "mongodb://root:example@localhost:27017/";
+const uri = process.env.MONGO_DB_URI;
 const client = new MongoClient(uri);
 
 let db;
@@ -8,7 +8,7 @@ let db;
 export async function initDb() {
   if (!db) {
     await client.connect();
-    db = client.db("mydb"); // 👈 Cambia por el nombre de tu DB
+    db = client.db(process.env.DATABASE_NAME);
   }
   return db;
 }

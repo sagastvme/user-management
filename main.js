@@ -1,10 +1,7 @@
-// Core modules
 import path from 'path';
-import { fileURLToPath } from 'url'; // para __dirname
+import { fileURLToPath } from 'url'; 
 
-// External modules
 import express from 'express';
-import bcrypt from 'bcrypt';
 import { nanoid } from 'nanoid';
 import {
     getHashByRefreshToken,
@@ -16,10 +13,9 @@ import {
     insertUser
 } from './repositories/userRepository.js';
 
-// Helpers
-import { hashRefreshToken } from './helpers/cryptoUtils.js';
+import { hashRefreshToken, validPassword } from './helpers/cryptoUtils.js';
 import { generateJwtAndRefreshToken } from './helpers/jwtUtils.js';
-import { hashString } from './helpers/cryptoUtils.js'; // 👈 lo usas en register
+import { hashString } from './helpers/cryptoUtils.js'; 
 import { sanitizeInputs } from './helpers/validationUtils.js';
 import { getIPv4, getUserAgent } from './helpers/requestUtils.js';
 const app = express()
@@ -29,8 +25,7 @@ app.set('trust proxy', true);
 
 
 
-const port = 3000
-const pw_pepper = 'holaestoayudaanoserhackeado'
+const port = process.env.NODE_SERVER_PORT
 //Cosas por hacer: 
 //session max age, every 14 day re log in 
 //table with warnings?
@@ -39,10 +34,12 @@ const pw_pepper = 'holaestoayudaanoserhackeado'
 // add a setupscript for the mongodb so it has a ttl 
 //anadir el jsdoc o como se llame
 // multiples sesiohnes a la vez 
+//endpoint para public keys 
 // cerrar sesiones en los dispositivos
 // cerrar sesion en x dispositivos 
 // add try catch a todo lo que tenga que ver con bd
-//mover variables al .env 
+
+//cuando se cree el contenedor por primera vez hacer un script que cree el .env automaticamente
 //crear dockerfile con la bbdd el server node mover las variables a ese env 
 //generar claves nuevas para cada servidor creado
 //meter una cache
@@ -53,7 +50,6 @@ const pw_pepper = 'holaestoayudaanoserhackeado'
 //crear el html para usar para el proyecto segun los campos que elija para el user 
 //hacer tests
 //add logs for every action taken 
-//ttl for database refreshtoken 
 
 
 
@@ -88,7 +84,6 @@ app.post('/refresh', async (req, res) => {
 app.post('/logout', async (req, res) => {
     let { refreshToken } = req.body;
     if (!refreshToken) return res.status(400).json({ error: 'No refresh token sent' });
-    const hashed = hashRefreshToken(refreshToken);
     await deleteHashByRefreshToken(refreshToken)
     return res.status(200).json({ message: 'Logged out' });
 })
@@ -111,8 +106,7 @@ app.post('/login', async (req, res) => {
 
     let passwordHashed = userFound['password']
     let sub = userFound['sub'];
-    const correctPassword = await bcrypt.compare(password + pw_pepper, passwordHashed);
-
+    const correctPassword = await validPassword(password, passwordHashed)
     if (!correctPassword) {
         return res.status(400).json({ error: 'Wrong password' }); // Código 400: Bad Request
     }
