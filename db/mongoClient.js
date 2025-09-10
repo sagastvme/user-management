@@ -6,9 +6,14 @@ const client = new MongoClient(uri);
 let db;
 
 export async function initDb() {
-  if (!db) {
-    await client.connect();
-    db = client.db(process.env.DATABASE_NAME);
+  try {
+    if (!db) {
+      await client.connect();
+      db = client.db(process.env.DATABASE_NAME);
+    }
+    return db;
+  } catch (error) {
+    console.log('error connecting to db ', error)
+    throw error
   }
-  return db;
 }

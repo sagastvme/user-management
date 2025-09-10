@@ -3,32 +3,42 @@ import { hashRefreshToken } from '../helpers/cryptoUtils.js';
 
 const COLLECTION = "refreshTokens";
 
-export async function insertHash(refreshToken, hashedToken, sub,  createdAt, ip, userAgent, deviceId) {
+export async function insertHash(refreshToken, hashedToken, sub, createdAt, ip, userAgent, deviceId) {
+  try {
     const db = await mongoClient.initDb();
-    try {
-        await db.collection(COLLECTION).insertOne({
-           _id: hashedToken, sub, createdAt,ip,userAgent,deviceId
-        }); 
-        console.log("✅ Hashed insertado:", refreshToken);
-    } catch (err) {
-        console.log(err)
-        throw err;
-    }
+    await db.collection(COLLECTION).insertOne({
+      _id: hashedToken, sub, createdAt, ip, userAgent, deviceId
+    });
+    console.log("✅ Hashed insertado:", refreshToken);
+  } catch (err) {
+    console.log('error inserting hash ', err)
+    throw err;
+  }
 }
 
 export async function getHashByRefreshToken(refreshToken) {
+  try {
     const db = await mongoClient.initDb();
     const hashedToken = hashRefreshToken(refreshToken)
     const doc = await db.collection(COLLECTION).findOne({ _id: hashedToken });
     return doc;
+  } catch (error) {
+    console.log('error getting hash by refresh token ', error)
+    throw error
+  }
 }
 
 export async function deleteHashByRefreshToken(refreshToken) {
-    
+  try {
+
     const db = await mongoClient.initDb();
     const hashedToken = hashRefreshToken(refreshToken)
     const doc = await db.collection(COLLECTION).deleteOne({ _id: hashedToken });
     return doc
+  } catch (error) {
+    console.log('error deleting hash by refresh token ', error)
+    throw error
+  }
 }
 
 export async function deleteAllHashesBySub(sub) {
@@ -40,14 +50,3 @@ export async function deleteAllHashesBySub(sub) {
     throw err;
   }
 }
-
-// (async()=>{
-//   console.log('hola')
-//       const db = await mongoClient.initDb();
-
-//   db.collection(COLLECTION).insertOne({
-//   token: "test",
-//   createdAt: new Date(Date.now() - 8 * 60 * 60 * 1000) // 8 hours ago
-// });
-
-// })();
