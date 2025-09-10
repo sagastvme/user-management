@@ -3,12 +3,12 @@ import * as bcrypt from "bcrypt"
 
 const pw_pepper = process.env.PW_PEPPER
 
-export function hashRefreshToken(refreshToken) {
+export function hashString(refreshToken) {
   return crypto.createHash('sha256').update(refreshToken + pw_pepper).digest('hex')
 }
 
 
-export async function hashString(password) {
+export async function hashPassword(password) {
   return bcrypt.hash(password + pw_pepper, 10)
 }
 

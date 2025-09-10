@@ -1,7 +1,7 @@
 import * as mongoClient from '../db/mongoClient.js'
 import { hashString } from '../helpers/cryptoUtils.js';
 
-const COLLECTION = "refreshTokens";
+const COLLECTION = "apiKeys";
 
 export async function insertHash(refreshToken, hashedToken, sub, createdAt, ip, userAgent, deviceId) {
   try {

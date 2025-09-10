@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 const { sign } = jwt;   
 
 import { deleteAllHashesBySub, insertHash } from "../repositories/refreshTokenRepository.js";
-import { hashRefreshToken } from "./cryptoUtils.js";
+import { hashString } from "./cryptoUtils.js";
 import * as fs from 'fs'
 import { nanoid } from "nanoid";
 
@@ -34,7 +34,7 @@ export async function generateJwtAndRefreshToken(sub, ip, userAgent) {
     })
 
     const rawRefresh = crypto.randomBytes(32).toString('hex') 
-    const hashedRefresh = hashRefreshToken(rawRefresh)
+    const hashedRefresh = hashString(rawRefresh)
 
    const createdAt = new Date();
     // await deleteAllHashesBySub(sub)

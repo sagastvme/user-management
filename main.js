@@ -14,9 +14,9 @@ import {
     insertUser
 } from './repositories/userRepository.js';
 
-import { hashRefreshToken, validPassword } from './helpers/cryptoUtils.js';
+import { hashString, validPassword } from './helpers/cryptoUtils.js';
 import { generateJwtAndRefreshToken } from './helpers/jwtUtils.js';
-import { hashString } from './helpers/cryptoUtils.js';
+import { hashPassword } from './helpers/cryptoUtils.js';
 import { sanitizeInputs } from './helpers/validationUtils.js';
 import { getIPv4, getUserAgent } from './helpers/requestUtils.js';
 const app = express()
@@ -153,7 +153,7 @@ app.post('/register', isValidServer, async (req, res) => {
         const { username: cleanUsername, password: cleanPassword } = sanitized;
 
         // Hash password
-        const hashedPassword = await hashString(cleanPassword);
+        const hashedPassword = await hashPassword(cleanPassword);
         const sub = `user_${nanoid()}`;
 
         await insertUser(cleanUsername, hashedPassword, sub);
