@@ -36,8 +36,6 @@ const port = process.env.NODE_SERVER_PORT
 //endpoint para public keys 
 // cerrar sesiones en los dispositivos
 // cerrar sesion en x dispositivos 
-// add try catch a todo lo que tenga que ver con bd
-
 //cuando se cree el contenedor por primera vez hacer un script que cree el .env automaticamente
 //crear dockerfile con la bbdd el server node mover las variables a ese env 
 //generar claves nuevas para cada servidor creado
@@ -49,7 +47,12 @@ const port = process.env.NODE_SERVER_PORT
 //crear el html para usar para el proyecto segun los campos que elija para el user 
 //hacer tests
 //add logs for every action taken 
-
+//como autenticar que el servidor bueno es el que esta llamando a esta api,
+// con api keys 
+//se generan manualmente con un script que lo introduce en una coleccion de mongo 
+//cada vez que se pida una accion hay que revisar que esa api key exista 
+//hay que hacer un script para desactive esa api key y genere una nueva 
+//si intentan usar una revocada auditarlo en un log 
 
 
 //ENDPOINTS:
@@ -59,8 +62,22 @@ const port = process.env.NODE_SERVER_PORT
 //get-all-sessions
 //middleware en proyecto personal 
 
+function isValidServer(req, res, next) {
+    const validKeys = ['1', '2'];
+    const apiKey = req.headers['x-api-key'];
 
-app.post('/refresh', async (req, res) => {
+    if (!apiKey) {
+        return res.status(401).json({ error: 'No API key provided' });
+    }
+
+    if (!validKeys.includes(apiKey)) {
+        return res.status(403).json({ error: 'Invalid API key' });
+    }
+
+    next();
+}
+
+app.post('/refresh', isValidServer, async (req, res) => {
     const { refreshToken, deviceId } = req.body;
     let ip = getIPv4(req)
     let userAgent = getUserAgent(req);
@@ -86,14 +103,14 @@ app.post('/refresh', async (req, res) => {
 });
 
 
-app.post('/logout', async (req, res) => {
+app.post('/logout', isValidServer, async (req, res) => {
     let { refreshToken } = req.body;
     if (!refreshToken) return res.status(400).json({ error: 'No refresh token sent' });
     await deleteHashByRefreshToken(refreshToken)
     return res.status(200).json({ message: 'Logged out' });
 })
 
-app.post('/login', async (req, res) => {
+app.post('/login', isValidServer, async (req, res) => {
     let { username, password } = req.body
     let ip = getIPv4(req)
     let userAgent = getUserAgent(req);
@@ -124,7 +141,7 @@ app.post('/login', async (req, res) => {
 
 })
 
-app.post('/register', async (req, res) => {
+app.post('/register', isValidServer, async (req, res) => {
     const { username, password } = req.body;
     let ip = getIPv4(req)
     let userAgent = getUserAgent(req);
