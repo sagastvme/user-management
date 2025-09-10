@@ -1,11 +1,12 @@
 import path from 'path';
-import { fileURLToPath } from 'url'; 
+import { fileURLToPath } from 'url';
 
 import express from 'express';
 import { nanoid } from 'nanoid';
 import {
     getHashByRefreshToken,
-    deleteHashByRefreshToken
+    deleteHashByRefreshToken,
+    deleteAllHashesBySub
 } from './repositories/refreshTokenRepository.js';
 
 import {
@@ -15,7 +16,7 @@ import {
 
 import { hashRefreshToken, validPassword } from './helpers/cryptoUtils.js';
 import { generateJwtAndRefreshToken } from './helpers/jwtUtils.js';
-import { hashString } from './helpers/cryptoUtils.js'; 
+import { hashString } from './helpers/cryptoUtils.js';
 import { sanitizeInputs } from './helpers/validationUtils.js';
 import { getIPv4, getUserAgent } from './helpers/requestUtils.js';
 const app = express()
@@ -29,7 +30,6 @@ const port = process.env.NODE_SERVER_PORT
 //Cosas por hacer: 
 //session max age, every 14 day re log in 
 //table with warnings?
-//check deviceId when refreshing access token 
 //if an old token that has been used already is received delete all tokens for that user
 //anadir el jsdoc o como se llame
 // multiples sesiohnes a la vez 
@@ -73,7 +73,13 @@ app.post('/refresh', async (req, res) => {
     if (!hashedToken) {
         return res.status(401).json({ error: 'Invalid refresh token' });
     }
-    //add something to check if its the same device and ip as the original one 
+
+    if (deviceId !== hashedToken?.deviceId) {
+        await deleteAllHashesBySub(hashedToken?.sub)
+        return res.status(401).json({ error: 'Invalid device id' });
+    }
+
+
     const { jwt, refreshToken: newRefresh, deviceId: newDeviceId } = await generateJwtAndRefreshToken(hashedToken.sub, ip, userAgent);
     await deleteHashByRefreshToken(refreshToken)
     return res.status(200).json({ jwt, refreshToken: newRefresh, deviceId: newDeviceId });
