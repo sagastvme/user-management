@@ -14,7 +14,7 @@ import {
     insertUser
 } from './repositories/userRepository.js';
 
-import { hashString, validPassword } from './helpers/cryptoUtils.js';
+import { validPassword } from './helpers/cryptoUtils.js';
 import { generateJwtAndRefreshToken } from './helpers/jwtUtils.js';
 import { hashPassword } from './helpers/cryptoUtils.js';
 import { sanitizeInputs } from './helpers/validationUtils.js';
@@ -27,6 +27,17 @@ app.set('trust proxy', true);
 
 
 const port = process.env.NODE_SERVER_PORT
+
+//haciendo:
+// acabar el apikeyrepository 
+//script que genera una key la guarda en bd y la devuelve al user o genera un archivo 
+//script que settea la api key a active:false revokedAt:
+//en bd solo guardar hashes 
+//en el middleware hashear todo el rato 
+//meter una cache ?
+
+
+
 //Cosas por hacer: 
 //session max age, every 14 day re log in 
 //table with warnings?
