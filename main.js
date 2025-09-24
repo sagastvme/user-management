@@ -30,11 +30,14 @@ app.set('trust proxy', true);
 const port = process.env.NODE_SERVER_PORT
 
 //haciendo:
-//change collection variables so there is only one and thhey are stored on the repository files
+
+//refactor all db methods to only use some generic ones 
+
+
 //if api key used and active === false log it 
 //cache for isValidServer
-
-
+//add the login try catch in each specific user repo not on the dao 
+//close db connection when test is done
 //Cosas por hacer: 
 //pensar algo para que esto se pueda usar con spa -> whitelist domain y pkce 
 //session max age, every 14 day re log in 

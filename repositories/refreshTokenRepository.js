@@ -5,10 +5,9 @@ export const REFRESH_TOKENS_COLLECTION = "refreshTokens";
 
 export async function insertHash(refreshToken, hashedToken, sub, createdAt, ip, userAgent, deviceId) {
   try {
-    const db = await mongoClient.initDb();
-    await db.collection(REFRESH_TOKENS_COLLECTION).insertOne({
+    await mongoClient.insertOne(REFRESH_TOKENS_COLLECTION, {
       _id: hashedToken, sub, createdAt, ip, userAgent, deviceId
-    });
+    })
     console.log("✅ Hashed insertado:", refreshToken);
   } catch (err) {
     console.log('error inserting hash ', err)
@@ -18,10 +17,8 @@ export async function insertHash(refreshToken, hashedToken, sub, createdAt, ip, 
 
 export async function getHashByRefreshToken(refreshToken) {
   try {
-    const db = await mongoClient.initDb();
     const hashedToken = hashString(refreshToken)
-    const doc = await db.collection(REFRESH_TOKENS_COLLECTION).findOne({ _id: hashedToken });
-    return doc;
+    return mongoClient.findOne(REFRESH_TOKENS_COLLECTION, { _id: hashedToken })
   } catch (error) {
     console.log('error getting hash by refresh token ', error)
     throw error
@@ -31,10 +28,8 @@ export async function getHashByRefreshToken(refreshToken) {
 export async function deleteHashByRefreshToken(refreshToken) {
   try {
 
-    const db = await mongoClient.initDb();
     const hashedToken = hashString(refreshToken)
-    const doc = await db.collection(REFRESH_TOKENS_COLLECTION).deleteOne({ _id: hashedToken });
-    return doc
+    return mongoClient.deleteOne(REFRESH_TOKENS_COLLECTION, { _id: hashedToken })
   } catch (error) {
     console.log('error deleting hash by refresh token ', error)
     throw error
@@ -43,8 +38,7 @@ export async function deleteHashByRefreshToken(refreshToken) {
 
 export async function deleteAllHashesBySub(sub) {
   try {
-    const db = await mongoClient.initDb();
-    await db.collection(REFRESH_TOKENS_COLLECTION).deleteMany({ sub });
+    return mongoClient.deleteMany(REFRESH_TOKENS_COLLECTION, { sub })
   } catch (err) {
     console.error('Error deleting previous refresh tokens for user', err);
     throw err;
