@@ -30,35 +30,31 @@ app.set('trust proxy', true);
 const port = process.env.NODE_SERVER_PORT
 
 //haciendo:
-
-//refactor all db methods to only use some generic ones 
-
-
-//if api key used and active === false log it 
-//cache for isValidServer
-//add the login try catch in each specific user repo not on the dao 
-//close db connection when test is done
-//Cosas por hacer: 
-//pensar algo para que esto se pueda usar con spa -> whitelist domain y pkce 
-//session max age, every 14 day re log in 
-//table with warnings?
-//if an old token that has been used already is received delete all tokens for that user
-//anadir el jsdoc o como se llame
-// multiples sesiohnes a la vez 
-//endpoint para public keys 
+//mostrar sesiones en los dispositivos
 // cerrar sesiones en los dispositivos
 // cerrar sesion en x dispositivos 
+
+
+
+//Cosas por hacer: 
+//add the login try catch in each specific user repo not on the dao 
+//update isvalidserver so it handles spas well right now it only handles server side requests 
+//pensar algo para que esto se pueda usar con spa -> whitelist domain y pkce 
+//permitir registrar varios clientes para usar este servicio e identificar si son spa o no 
+//session max age, every 14 day re log in 
+//endpoint para public keys 
 //cuando se cree el contenedor por primera vez hacer un script que cree el .env automaticamente
 //crear dockerfile con la bbdd el server node mover las variables a ese env 
 //generar claves nuevas para cada servidor creado
-//meter una cache
 //cors 
 //swagger para la documentacion de la api 
 //opciones si quiere que el username sea el email un username aparte y otras opciones como requisitos de contrasenas etc 
-//crear middleware
 //crear el html para usar para el proyecto segun los campos que elija para el user 
+//make nice ui for user to deal with everything 
 //hacer tests
 //add logs for every action taken 
+//meter una cache
+//anadir el jsdoc o como se llame
 
 //ENDPOINTS:
 //change-password

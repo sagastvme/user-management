@@ -75,3 +75,9 @@ export async function findMany(collectionName, doc) {
   const db = await initDb();
   return db.collection(collectionName).findMany(doc);
 }
+
+
+export async function updateMany(collectionName, identifier, updateQuery) {
+  const db = await initDb();
+  return db.collection(collectionName).updateMany(doc, identifier, updateQuery);
+}

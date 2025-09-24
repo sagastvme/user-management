@@ -19,7 +19,8 @@ import fs from 'fs'
             active: true,
             createdAt,
             revokedAt: null,
-            createdBy: "generateApiKey.js"
+            createdBy: "generateApiKey.js",
+            owner : "HOLA" //user has to modify this 
         });
         const plain = Temporal.Now.plainDateTimeISO(); 
         const timestamp = `${plain.year}-${String(plain.month).padStart(2, "0")}-${String(plain.day).padStart(2, "0")}_${String(plain.hour).padStart(2, "0")}-${String(plain.minute).padStart(2, "0")}-${String(plain.second).padStart(2, "0")}`;
