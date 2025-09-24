@@ -1,12 +1,11 @@
 // generateApiKey.js
 
 import { nanoid } from 'nanoid';
-const COLLECTION = 'apiKeys'
 import { initDb } from '../db/mongoClient.js';
 import { hashString } from '../helpers/cryptoUtils.js';
 import path from 'path'
 import { Temporal } from "@js-temporal/polyfill";
-
+import { API_KEYS_COLLECTION } from '../repositories/apiKeysRepository.js';
 import fs from 'fs'
 (async () => {
     try {
@@ -15,7 +14,7 @@ import fs from 'fs'
         let hashed_key = hashString(api_key); //crypto is faster and because its already a complicated string no need to use bcrypt
         let createdAt = new Date();
 
-        await db.collection(COLLECTION).insertOne({
+        await db.collection(API_KEYS_COLLECTION).insertOne({
             _id: hashed_key,
             active: true,
             createdAt,

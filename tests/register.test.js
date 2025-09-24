@@ -2,6 +2,7 @@
 import fetch from 'node-fetch'; 
 const API_URL = `http://localhost:${process.env.NODE_SERVER_PORT}/register`;
 import { MongoClient } from 'mongodb';
+import { USER_REPOSITORY_COLLECTION } from '../repositories/userRepository';
 
 const USERNAME = 'race_test_user';
 const PASSWORD = 'securePassword123!';
@@ -13,7 +14,7 @@ describe('Register endpoint race condition test', () => {
     const client = new MongoClient(uri);
     await client.connect();
     let db = client.db(process.env.DATABASE_NAME); 
-    await db.collection('users').deleteOne({_id: USERNAME});
+    await db.collection(USER_REPOSITORY_COLLECTION).deleteOne({_id: USERNAME});
     await client.close()
     })
 

@@ -19,6 +19,7 @@ import { generateJwtAndRefreshToken } from './helpers/jwtUtils.js';
 import { hashPassword } from './helpers/cryptoUtils.js';
 import { sanitizeInputs } from './helpers/validationUtils.js';
 import { getIPv4, getUserAgent } from './helpers/requestUtils.js';
+import { isValidServer } from './middleware/isValidServer.js';
 const app = express()
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
@@ -29,16 +30,13 @@ app.set('trust proxy', true);
 const port = process.env.NODE_SERVER_PORT
 
 //haciendo:
-// acabar el apikeyrepository 
-//script que genera una key la guarda en bd y la devuelve al user o genera un archivo 
-//script que settea la api key a active:false revokedAt:
-//en bd solo guardar hashes 
-//en el middleware hashear todo el rato 
-//meter una cache ?
-
+//change collection variables so there is only one and thhey are stored on the repository files
+//if api key used and active === false log it 
+//cache for isValidServer
 
 
 //Cosas por hacer: 
+//pensar algo para que esto se pueda usar con spa -> whitelist domain y pkce 
 //session max age, every 14 day re log in 
 //table with warnings?
 //if an old token that has been used already is received delete all tokens for that user
@@ -58,13 +56,6 @@ const port = process.env.NODE_SERVER_PORT
 //crear el html para usar para el proyecto segun los campos que elija para el user 
 //hacer tests
 //add logs for every action taken 
-//como autenticar que el servidor bueno es el que esta llamando a esta api,
-// con api keys 
-//se generan manualmente con un script que lo introduce en una coleccion de mongo 
-//cada vez que se pida una accion hay que revisar que esa api key exista 
-//hay que hacer un script para desactive esa api key y genere una nueva 
-//si intentan usar una revocada auditarlo en un log 
-
 
 //ENDPOINTS:
 //change-password
@@ -73,20 +64,7 @@ const port = process.env.NODE_SERVER_PORT
 //get-all-sessions
 //middleware en proyecto personal 
 
-function isValidServer(req, res, next) {
-    const validKeys = ['1', '2'];
-    const apiKey = req.headers['x-api-key'];
 
-    if (!apiKey) {
-        return res.status(401).json({ error: 'No API key provided' });
-    }
-
-    if (!validKeys.includes(apiKey)) {
-        return res.status(403).json({ error: 'Invalid API key' });
-    }
-
-    next();
-}
 
 app.post('/refresh', isValidServer, async (req, res) => {
     const { refreshToken, deviceId } = req.body;

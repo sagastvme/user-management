@@ -1,7 +1,8 @@
 import readline from "readline";
-const COLLECTION = 'apiKeys'
+
 import { initDb } from '../db/mongoClient.js';
 import { hashString } from "../helpers/cryptoUtils.js";
+import { API_KEYS_COLLECTION } from "../repositories/apiKeysRepository.js";
 
 const rl = readline.createInterface({
     input: process.stdin,
@@ -17,7 +18,7 @@ const question = (query) =>
         const hashed = hashString(apiKey)
         let db = await initDb();
         let revokedAt = new Date();
-        const result = await db.collection(COLLECTION).updateOne(
+        const result = await db.collection(API_KEYS_COLLECTION).updateOne(
             { _id: hashed, active: true }, // filter
             { $set: { active: false, revokedAt } } // update
         );

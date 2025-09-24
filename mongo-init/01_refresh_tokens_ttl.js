@@ -1,12 +1,13 @@
 // Runs automatically at container init (first DB creation)
 // Sets up a TTL index so tokens expire 7h after insertion
 
+import { REFRESH_TOKENS_COLLECTION } from "../repositories/refreshTokenRepository";
+
 const dbName = process.env.DATABASE_NAME;
-const collection = 'refreshTokens';
 
 const db = db.getSiblingDB(dbName);
 
-db.createCollection(collection);
+db.createCollection(REFRESH_TOKENS_COLLECTION);
 
 // Create TTL index: expire 7 hours (25200 seconds) after createdAt
 db[collection].createIndex(

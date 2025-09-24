@@ -1,12 +1,12 @@
 import * as mongoClient from '../db/mongoClient.js'
 import { hashString } from '../helpers/cryptoUtils.js';
 
-const COLLECTION = "apiKeys";
+export const API_KEYS_COLLECTION = "apiKeys";
 
 export async function insertHash(refreshToken, hashedToken, sub, createdAt, ip, userAgent, deviceId) {
   try {
     const db = await mongoClient.initDb();
-    await db.collection(COLLECTION).insertOne({
+    await db.collection(API_KEYS_COLLECTION).insertOne({
       _id: hashedToken, sub, createdAt, ip, userAgent, deviceId
     });
     console.log("✅ Hashed insertado:", refreshToken);
@@ -20,7 +20,7 @@ export async function getHashByRefreshToken(refreshToken) {
   try {
     const db = await mongoClient.initDb();
     const hashedToken = hashString(refreshToken)
-    const doc = await db.collection(COLLECTION).findOne({ _id: hashedToken });
+    const doc = await db.collection(API_KEYS_COLLECTION).findOne({ _id: hashedToken });
     return doc;
   } catch (error) {
     console.log('error getting hash by refresh token ', error)
@@ -33,7 +33,7 @@ export async function deleteHashByRefreshToken(refreshToken) {
 
     const db = await mongoClient.initDb();
     const hashedToken = hashString(refreshToken)
-    const doc = await db.collection(COLLECTION).deleteOne({ _id: hashedToken });
+    const doc = await db.collection(API_KEYS_COLLECTION).deleteOne({ _id: hashedToken });
     return doc
   } catch (error) {
     console.log('error deleting hash by refresh token ', error)
@@ -44,7 +44,7 @@ export async function deleteHashByRefreshToken(refreshToken) {
 export async function deleteAllHashesBySub(sub) {
   try {
     const db = await mongoClient.initDb();
-    await db.collection(COLLECTION).deleteMany({ sub });
+    await db.collection(API_KEYS_COLLECTION).deleteMany({ sub });
   } catch (err) {
     console.error('Error deleting previous refresh tokens for user', err);
     throw err;

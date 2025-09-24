@@ -1,15 +1,16 @@
 // Runs automatically at container init (first DB creation)
 // Sets up an index to find refreshtokens by userid
 
+import { REFRESH_TOKENS_COLLECTION } from "../repositories/refreshTokenRepository";
+
 const dbName = process.env.DATABASE_NAME;
-const coll = 'refreshTokens';
 
 const db = db.getSiblingDB(dbName);
 
-// Ensure collection exists
-db.createCollection(coll);
+// Ensure REFRESH_TOKENS_COLLECTIONSection exists
+db.createCollection(REFRESH_TOKENS_COLLECTION);
 
-db[coll].createIndex(
+db[REFRESH_TOKENS_COLLECTION].createIndex(
   { sub: 1 },
   {
     name: 'index_for_user_id'
