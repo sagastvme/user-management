@@ -54,3 +54,13 @@ export async function getAllHasheshBySub(sub) {
     throw error
   }
 }
+
+
+export async function deleteSessionById(refreshTokens) {
+  try {
+    return mongoClient.deleteMany(REFRESH_TOKENS_COLLECTION, {_id: {$in: refreshTokens}})
+  } catch (error) {
+        console.log('error deleting sessions by id  ', error)
+    throw error
+  }
+}
