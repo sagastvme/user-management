@@ -6,7 +6,8 @@ import { nanoid } from 'nanoid';
 import {
     getHashByRefreshToken,
     deleteHashByRefreshToken,
-    deleteAllHashesBySub
+    deleteAllHashesBySub,
+    getAllHasheshBySub
 } from './repositories/refreshTokenRepository.js';
 
 import {
@@ -30,7 +31,6 @@ app.set('trust proxy', true);
 const port = process.env.NODE_SERVER_PORT
 
 //haciendo:
-//mostrar sesiones en los dispositivos
 // cerrar sesiones en los dispositivos
 // cerrar sesion en x dispositivos 
 
@@ -63,6 +63,21 @@ const port = process.env.NODE_SERVER_PORT
 //get-all-sessions
 //middleware en proyecto personal 
 
+
+app.get('/sessions', isValidServer, async (req, res) => {
+
+    const refreshToken = req.get("x-refresh-token");
+     if (!refreshToken) {
+      return res.status(400).json({ error: "No refresh token provided" });
+    }
+    const refreshTokenFromDb = await getHashByRefreshToken(refreshToken);
+    if (!refreshTokenFromDb) {
+      return res.status(401).json({ error: "Invalid refresh token" });
+    }
+    const { sub } = refreshTokenFromDb
+    let sessions = getAllHasheshBySub(sub)
+    return res.status(200).json({ sessions });
+})
 
 
 app.post('/refresh', isValidServer, async (req, res) => {

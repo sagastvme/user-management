@@ -44,3 +44,13 @@ export async function deleteAllHashesBySub(sub) {
     throw err;
   }
 }
+
+export async function getAllHasheshBySub(sub) {
+
+    try {
+    return mongoClient.findMany(REFRESH_TOKENS_COLLECTION, { sub })
+  } catch (error) {
+    console.log('error getting all refresh tokens ', error)
+    throw error
+  }
+}
