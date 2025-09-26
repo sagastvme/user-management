@@ -43,12 +43,16 @@ const port = process.env.NODE_SERVER_PORT;
 
 
 //Cosas por hacer: 
-//add the login try catch in each specific user repo not on the dao 
+//implement key rotation and implement auto rotation with keys mongo collection and cache for getpublickeys endpoint
+
+//endpoint para public keys 
+//meter una cache
+//add logs for every action taken
+
+//session max age, every 14 day re log in 
 //update isvalidserver so it handles spas well right now it only handles server side requests 
 //pensar algo para que esto se pueda usar con spa -> whitelist domain y pkce 
 //permitir registrar varios clientes para usar este servicio e identificar si son spa o no 
-//session max age, every 14 day re log in 
-//endpoint para public keys 
 //cuando se cree el contenedor por primera vez hacer un script que cree el .env automaticamente 
 //crear dockerfile con la bbdd el server node mover las variables a ese env 
 //generar claves nuevas para cada servidor creado 
@@ -58,8 +62,6 @@ const port = process.env.NODE_SERVER_PORT;
 //crear el html para usar para el proyecto segun los campos que elija para el user 
 //make nice ui for user to deal with everything 
 //hacer tests 
-//add logs for every action taken 
-//meter una cache 
 //anadir el jsdoc o como se llame 
 
 //ENDPOINTS: 
@@ -208,6 +210,10 @@ app.post(
         });
     })
 );
+
+app.get("/.well-known/jwks.json", (req, res) => {
+    //get keys from mongo
+});
 
 app.get("/", (req, res) => {
     const __filename = fileURLToPath(import.meta.url);
