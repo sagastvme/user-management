@@ -4,6 +4,51 @@ import { getIPv4, getUserAgent } from "../helpers/requestUtils";
 import { API_KEYS_COLLECTION, deactivateAllApiKeysByOwner, getApiKeyByToken } from "../repositories/apiKeysRepository";
 import { insertLog, LOG_CATEGORIES, LOG_EVENTS, LOG_LEVELS } from "../repositories/auditLogsRepository";
 
+
+// middleware/middleware.js
+export function requiredFields(params = []) {
+  return function (req, res, next) {
+    let source;
+
+    // Auto-detect where to check
+    const method = req.method.toLowerCase();
+    if (["post", "put", "patch"].includes(method)) {
+      source = req.body;
+    } else if (method === "get" || method === "delete") {
+      source = req.query;
+    } else {
+      source = req.body || req.query; // fallback
+    }
+
+    if (!source) {
+      return res.status(400).json({ error: "Request data missing" });
+    }
+
+    const missing = params.filter((param) => !(param in source));
+
+    if (missing.length > 0) {
+      return res
+        .status(400)
+        .json({ error: `Missing required fields: ${missing.join(", ")}` });
+    }
+
+    next();
+  };
+}
+
+export function asyncHandler(fn) {
+  return function (req, res, next) {
+    Promise.resolve(fn(req, res, next)).catch((e) => {
+      console.error("Error executing fn:", fn.name, ", error:", e);
+      next(e); // Pass error to Express error handler
+    });
+  };
+}
+
+
+
+
+
 export async function isValidServer(req, res, next) {
   try {
     const apiKey = req.get("x-api-key");
